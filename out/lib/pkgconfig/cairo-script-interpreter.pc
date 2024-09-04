@@ -1,0 +1,10 @@
+prefix=/Users/dsc/static/out
+includedir=${prefix}/include
+libdir=${prefix}/lib
+
+Name: cairo-script-interpreter
+Description: script surface backend for cairo graphics library
+Version: 1.18.2
+Requires: pixman-1, cairo, zlib, libpng >=  1.4.0, fontconfig >=  2.13.0, freetype2 >=  23.0.17
+Libs: -L${libdir} -lcairo-script-interpreter -lm -ldl -framework CoreFoundation -framework ApplicationServices
+Cflags: -I${includedir}/cairo

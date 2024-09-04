@@ -1,0 +1,10 @@
+prefix=/Users/dsc/static/out
+exec_prefix=/Users/dsc/static/out
+libdir=/Users/dsc/static/out/lib
+includedir=/Users/dsc/static/out/include
+
+Name: libturbojpeg
+Description: A SIMD-accelerated JPEG codec that provides the TurboJPEG API
+Version: 3.0.3
+Libs: -L${libdir} -lturbojpeg
+Cflags: -I${includedir}

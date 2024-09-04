@@ -1,0 +1,10 @@
+prefix=/Users/dsc/static/out
+includedir=${prefix}/include
+libdir=${prefix}/lib
+
+Name: cairo
+Description: Multi-platform 2D graphics library
+Version: 1.18.2
+Requires: pixman-1, zlib, libpng >=  1.4.0, fontconfig >=  2.13.0, freetype2 >=  23.0.17
+Libs: -L${libdir} -lcairo -lm -ldl -framework CoreFoundation -framework ApplicationServices
+Cflags: -I${includedir}/cairo

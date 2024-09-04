@@ -1,0 +1,11 @@
+prefix=/Users/dsc/static/out
+exec_prefix=/Users/dsc/static/out
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+Name: libmng
+Description: Loads PNG/MNG/JNG files
+Version: 2.0.2
+Libs: -L${libdir} -lmng -ljpeg -lz -llcms2 -lm
+Libs.private:  -ljpeg -lz -llcms2 -lm
+Cflags: -I${includedir}

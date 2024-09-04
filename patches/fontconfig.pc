@@ -1,0 +1,18 @@
+prefix=/Users/dsc/static/out
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+sysconfdir=/Users/dsc/static/out/etc
+localstatedir=/Users/dsc/static/out/var
+PACKAGE=fontconfig
+confdir=${sysconfdir}/fonts
+cachedir=${localstatedir}/cache/${PACKAGE}
+
+Name: Fontconfig
+Description: Font configuration and customization library
+Version: 2.15.0
+Requires:  freetype2 >= 21.0.15 expat
+Requires.private:  expat
+Libs: -L${libdir} -lfontconfig
+Libs.private:  
+Cflags: -I${includedir}  

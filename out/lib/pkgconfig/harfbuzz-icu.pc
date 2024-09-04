@@ -1,0 +1,10 @@
+prefix=/Users/dsc/static/out
+includedir=${prefix}/include
+libdir=${prefix}/lib
+
+Name: harfbuzz-icu
+Description: HarfBuzz text shaping library ICU integration
+Version: 9.0.0
+Requires: harfbuzz =  9.0.0, icu-uc >=  49.0
+Libs: -L${libdir} -lharfbuzz-icu
+Cflags: -I${includedir}/harfbuzz
