@@ -1,13 +1,22 @@
-## Qt6.8 + Mac OS ARM64 + Vulkan
+## Qt6.8 + MacOS ARM64 + Vulkan (MoltenVK)
 
-This repo will compile `Qt6.8-beta4` using as many static libraries as possible: openssl lcms2 jpeg-turbo expat icu pcre2 graphite2 harfbuzz fontconfig freetype2 again cairo libb2 zstd tiff libwebp pcre2 fontconfig md4c libmng libevent double-conversion brotli libpng.
+![cubes.png](cubes.png)
 
-The Qt build itself is dynamically linked, as to adhere to LGPL3.
+This repo will compile `Qt6.8-beta4` using as many static libraries as possible: 
+
+`openssl3 lcms2 jpeg-turbo expat icu pcre2 graphite2 harfbuzz fontconfig freetype2 again cairo libb2 zstd tiff libwebp pcre2 fontconfig md4c libmng libevent double-conversion brotli libpng`
+
+The Qt build itself is for dynamically linking, so you can follow LGPL3.
 
 The above dependencies are manually installed (see `install_deps.sh`) with the goal of 
 creating a folder (`$prefix`) that only contains static libraries (`.a`). We cannot use Homebrew, 
 as that will install dynamic libraries (`.dylib`) which the Qt installation will give 
-precedence to when looking for libraries (the configuration step ignores `CMAKE_FIND_LIBRARY_SUFFIXES`).
+precedence to when looking for libraries (it ignores `CMAKE_FIND_LIBRARY_SUFFIXES`).
+
+This repository also contains patches to both Qt and several libraries to fix 
+pkgconfig files, as well as add/modify CMake targets.
+
+### Getting started
 
 There are 3 steps:
 
@@ -19,10 +28,6 @@ This repository comes with the directory `out/` filled with libraries that have
 been previously compiled. Perhaps these libraries work for you, so that you may skip 
 step 1.
 
-In addition, this repository comes as-is and we do not provide support.
-
-####
-
 Clone this repo to start.
 
 ```bash
@@ -32,9 +37,11 @@ cd ~/static
 
 ## 1. Install dependencies
 
+For context, as of writing the MacOS SDK (over at `/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/`) was version 14.
+
 ### homebrew stuff
 
-Some basic tools.
+We need some tooling to start.
 
 ```bash
 brew install autoconf automake libtool python@3.12 virtualenv wget cmake node@22 ccache ninja
@@ -52,6 +59,11 @@ verify that this script successfully completes.
 ```bash
 bash configure_qt.sh
 ```
+
+- **note 1:** Path to Vulkan SDK is hardcoded to version 1.3.290.0, if different, change `configure_qt.sh`. For safety, the script will verify the path.
+- **note 2:** Path to Mac OS SDK is hardcoded to version 14, if different, change `configure_qt.sh`. For safety, the script will verify the path.
+- **note 3:** To clear build cache, remove the qt6 build directory: `rm -rf qt6/build` then run `configure_qt.sh` again to start fresh.
+- **note 4:** `qt6/build/CMakeCache.txt` can be handy for a detailed description of what CMake was able to configure
 
 The output is important, it should look like:
 
@@ -120,8 +132,6 @@ cmake -DCMAKE_PREFIX_PATH="/Users/foo/static/build;/Users/foo/VulkanSDK/1.3.290.
 make -Cbuild -j8
 ```
 
-`DYLD_PRINT_LIBRARIES=1 QT_VK_DEBUG=1 QT_LOGGING_RULES="qt.vulkan=true" QT_VULKAN_LIB=/Users/dsc/VulkanSDK/1.3.290.0/macOS/lib/libMoltenVK.dylib ./build/hellovulkancubes.app/Contents/MacOS/hellovulkancubes`
+`DYLD_PRINT_LIBRARIES=1 QT_VK_DEBUG=1 QT_LOGGING_RULES="qt.vulkan=true" QT_VULKAN_LIB=/Users/foo/VulkanSDK/1.3.290.0/macOS/lib/libMoltenVK.dylib ./build/hellovulkancubes.app/Contents/MacOS/hellovulkancubes`
 
-note `QT_VULKAN_LIB`.
-
-![cubes.png](cubes.png)
+note `QT_VULKAN_LIB`; ensure this path is correct.
