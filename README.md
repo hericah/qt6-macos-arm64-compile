@@ -6,7 +6,12 @@ This repo will compile `Qt6.8-beta4` using as many static libraries as possible:
 
 `openssl3 lcms2 jpeg-turbo expat icu pcre2 graphite2 harfbuzz fontconfig freetype2 again cairo libb2 zstd tiff libwebp pcre2 fontconfig md4c libmng libevent double-conversion brotli libpng`
 
-The Qt build itself is for dynamically linking, so you can follow LGPL3.
+The resulting Qt build can be linked against dynamically, for usage under LGPL3.
+
+The reason this repository exists is because the Qt installer does not offer 
+a version of Qt that includes Vulkan via MoltenVK (to get `QVulkanInstance` 
+and `QVulkanWindow`). In addition, a custom Qt is advisable to ensure flags 
+like `-DQT_FEATURE_webengine_proprietary_codecs=OFF` are set before app distribution.
 
 The above dependencies are manually installed (see `install_deps.sh`) with the goal of 
 creating a folder (`$prefix`) that only contains static libraries (`.a`). We cannot use Homebrew, 
@@ -98,8 +103,7 @@ cmake --build build --parallel 1 --target qtwebengine
 cmake --build build --parallel 8
 ```
 
-**note**: webengine has parallel 1 to prevent an error, the rest can be 8 threads. The 
-final statement just installs everything.
+**note**: webengine has parallel 1 to prevent a race condition, the rest can be 8 threads.
 
 ### install
 
@@ -111,16 +115,11 @@ cmake --install build
 
 ## Usage
 
-Then finally, to compile a Qt program against this custom Qt6.8:
+Then finally use `CMAKE_PREFIX_PATH` to compile your own Qt program against this custom Qt6.8:
 
 ```bash
 cmake -DCMAKE_PREFIX_PATH="/Users/foo/static/build;/Users/foo/VulkanSDK/1.3.290.0/macOS/" -B build .
 ```
-
-2 paths are given to `CMAKE_PREFIX_PATH`:
-- Path to Vulkan SDK
-- Path to Qt
-
 confirm these paths make sense.
 
 ### hellovulkancubes
@@ -135,3 +134,80 @@ make -Cbuild -j8
 `DYLD_PRINT_LIBRARIES=1 QT_VK_DEBUG=1 QT_LOGGING_RULES="qt.vulkan=true" QT_VULKAN_LIB=/Users/foo/VulkanSDK/1.3.290.0/macOS/lib/libMoltenVK.dylib ./build/hellovulkancubes.app/Contents/MacOS/hellovulkancubes`
 
 note `QT_VULKAN_LIB`; ensure this path is correct.
+
+## Distribution
+
+### The hard way
+
+Copy the following into on directory:
+
+1. the Qt executable you want to ship
+2. `libMoltenVK.dylib`
+3. Copy the Qt as-is directory into `qt`
+
+Create `qt.conf` with the contents:
+
+```text
+[Paths]
+Documentation = qt/doc
+Headers = qt/include
+Libraries = qt/lib
+LibraryExecutables = qt/libexec
+Binaries = qt/bin 
+Plugins = qt/plugins
+QmlImports = qt/qml
+Translations = qt/translations
+Examples = qt/examples
+Tests = qt/tests
+```
+
+The directory should look like this:
+
+```text
+➜  $ ls -al
+total 30672
+drwxr-xr-x   6 dsc  staff       192  8 Sep 01:37 .
+drwxr-x---+ 58 dsc  staff      1856  8 Sep 01:44 ..
+-rwxr-xr-x   1 dsc  staff    297472  8 Sep 01:30 hellovulkancubes
+-rwxr-xr-x   1 dsc  staff  15399712  8 Sep 01:23 libMoltenVK.dylib
+drwxr-xr-x  13 dsc  staff       416  8 Sep 01:24 qt
+-rw-r--r--   1 dsc  staff       234  8 Sep 01:38 qt.conf
+
+➜  $ ls qt/
+bin         include     libexec     mkspecs     phrasebooks qml
+doc         lib         metatypes   modules     plugins
+```
+
+Change rpath of your executable:
+
+```text 
+install_name_tool -add_rpath 'qt/lib' hellovulkancubes
+```
+
+**note:** you may need to remove any existing rpath with `-delete_rpath <path>`
+
+Verify rpath is correct:
+
+```text
+➜  $ otool -l hellovulkancubes
+[...]
+Load command 31
+          cmd LC_RPATH
+      cmdsize 24
+         path qt/lib (offset 12)
+```
+
+The executable is now portable (probably?! needs testing, `DYLD_PRINT_LIBRARIES=1` looks good though):
+
+```text
+QT_VULKAN_LIB=libMoltenVK.dylib ./hellovulkancubes
+```
+
+**note:** not sure how to get rid of `QT_VULKAN_LIB` but you can set it via `qputenv` before 
+constructing e.g `QApplication`. 
+
+Now zip this directory and pray it runs on other MacOS machines.
+
+### The easy way
+
+Try `macdeployqt`
