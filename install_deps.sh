@@ -4,9 +4,6 @@ set -e
 prefix="`pwd`/out"
 THREADS=8
 
-# brew install libxcb libx11 libxau libxext libxrender autoconf automake libtool python@3.12 virtualenv wget cmake
-# brew uninstall libxdmcp xorgproto libxcb libx11 libxau libxext
-
 # install/activate venv
 bash ensure_python.sh
 source venv/bin/activate
@@ -18,12 +15,6 @@ mkdir -p $prefix/bin
 mkdir -p $prefix/include
 
 sudo chmod -R 774 $prefix || true
-# yolo copy homebrew include dir
-# mkdir -p out && cp -rL /opt/homebrew/include out/ || true
-
-# dont need everything
-# rm -rf out/include/Qt* 2>/dev/null || true
-# rm -rf out/include/boost 2>/dev/null || true
 
 ### openssl
 
@@ -208,23 +199,6 @@ if [ ! -d "libb2-0.98.1" ]; then
   popd
 fi
 
-# we will copy libjpeg.a from homebrew because compiling it is a bit annoying
-# with flags depending on CPU arch, etc.
-# echo "[*] copying jpeg-turbo stuff"
-# cp /opt/homebrew/Cellar/jpeg-turbo/*/lib/libjpeg.a out/lib
-# chmod 644 out/lib/libjpeg.a
-# cp /opt/homebrew/Cellar/jpeg-turbo/*/include/* out/include/
-
-# mkdir -p out/lib/cmake/libjpeg-turbo/
-# chmod 744 out/lib/cmake/libjpeg-turbo/ || true
-# cp -R /opt/homebrew/Cellar/jpeg-turbo/*/lib/cmake/libjpeg-turbo out/lib/cmake
-# chmod 744 out/lib/cmake/libjpeg-turbo/* || true
-
-# mkdir -p out/lib/pkgconfig
-# python3 produce_libjpeg.py > out/lib/pkgconfig/libjpeg.pc
-# echo "written out/lib/pkgconfig/libjpeg.pc"
-# chmod 774 out/lib/pkgconfig/libjpeg.pc
-
 ### zstd
 
 if [ ! -d "zstd-1.5.6" ]; then
@@ -264,29 +238,6 @@ fi
 
 # yeah well, whatever
 sudo chmod -R 774 $prefix
-
-# copy .a's, and pkgconfig
-# for lib in `ls /opt/homebrew/Cellar/libxcb/*/lib/*.a`; do cp $lib out/lib; done
-# cp /opt/homebrew/Cellar/libxcb/*/lib/pkgconfig/* out/lib/pkgconfig/ || true
-
-# for lib in `ls /opt/homebrew/Cellar/libxau/*/lib/*.a`; do cp $lib out/lib; done
-# cp /opt/homebrew/Cellar/libxau/*/lib/pkgconfig/* out/lib/pkgconfig/ || true
-
-# for lib in `ls /opt/homebrew/Cellar/libx11/*/lib/*.a`; do cp $lib out/lib; done
-# cp -R /opt/homebrew/Cellar/libx11/*/lib/X11 out/lib
-# cp /opt/homebrew/Cellar/libx11/*/lib/pkgconfig/* out/lib/pkgconfig/
-
-# for lib in `ls /opt/homebrew/Cellar/libxdmcp/*/lib/*.a`; do cp $lib out/lib; done
-# cp /opt/homebrew/Cellar/libxdmcp/*/lib/pkgconfig/* out/lib/pkgconfig/
-
-### pcre2
-
-#cp -L /opt/homebrew/lib/libpcre2*.a "out/lib/"
-#cp -L /opt/homebrew/lib/pkgconfig/libpcre2* "out/lib/pkgconfig/"
-#cp -L /opt/homebrew/include/pcre2*.h "out/include/"
-#cp -L /opt/homebrew/bin/pcre2* "out/bin/"
-
-
 
 ### fontconfig
 if [ ! -d "fontconfig-2.15.0" ]; then
