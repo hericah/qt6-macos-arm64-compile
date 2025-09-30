@@ -43,7 +43,7 @@ fi
 if [ ! -d "libjpeg-turbo" ]; then
   git clone https://github.com/libjpeg-turbo/libjpeg-turbo.git --branch 3.0.3 --depth 1
   pushd libjpeg-turbo
-  cmake -Bbuild -DENABLE_SHARED=OFF -DCMAKE_PREFIX_PATH="$prefix" -DCMAKE_INSTALL_PREFIX="$prefix" .
+  cmake -Bbuild -DENABLE_SHARED=OFF -DCMAKE_PREFIX_PATH="$prefix" -DCMAKE_INSTALL_PREFIX="$prefix" -DCMAKE_POLICY_VERSION_MINIMUM=3.5  .
   make -Cbuild -j8
   make -Cbuild install
   popd
@@ -76,7 +76,7 @@ fi
 if [ ! -d "double-conversion" ]; then
   git clone -b v3.3.0 --depth 1 https://github.com/google/double-conversion.git
   pushd double-conversion
-  cmake -DCMAKE_PREFIX_PATH="$prefix" -DCMAKE_INSTALL_PREFIX="$prefix" -Blolbuild . 
+  cmake -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_PREFIX_PATH="$prefix" -DCMAKE_INSTALL_PREFIX="$prefix" -Blolbuild . 
   make -Clolbuild -j8 
   make -Clolbuild -j8 install
   popd
@@ -85,7 +85,7 @@ fi
 if [ ! -d "brotli" ]; then
   git clone -b 1.1.0 --depth 1 https://github.com/kroketio/brotli.git
   pushd brotli
-  cmake -DBROTLI_DISABLE_TESTS=ON -DBROTLI_BUNDLED_MODE=OFF -DCMAKE_PREFIX_PATH="$prefix" -DBUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX="$prefix" -Blolbuild .
+  cmake -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DBROTLI_DISABLE_TESTS=ON -DBROTLI_BUNDLED_MODE=OFF -DCMAKE_PREFIX_PATH="$prefix" -DBUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX="$prefix" -Blolbuild .
   make -Clolbuild -j8
   make -Clolbuild -j8 install
   popd
@@ -107,7 +107,7 @@ if [ ! -d "freetype-2.13.3" ]; then
   wget https://download.savannah.gnu.org/releases/freetype/freetype-2.13.3.tar.xz 
   tar xvf freetype-2.13.3.tar.xz
   pushd freetype-2.13.3
-  cmake -Bbuild -DFT_DISABLE_HARFBUZZ=TRUE -DCMAKE_PREFIX_PATH="$prefix" -DCMAKE_INSTALL_PREFIX="$prefix" -DBUILD_SHARED_LIBS=OFF .
+  cmake -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -Bbuild -DFT_DISABLE_HARFBUZZ=TRUE -DCMAKE_PREFIX_PATH="$prefix" -DCMAKE_INSTALL_PREFIX="$prefix" -DBUILD_SHARED_LIBS=OFF .
   # ./configure --prefix=$prefix --enable-freetype-config --disable-shared --enable-static --without-harfbuzz
   make -Cbuild -j$THREADS
   make -Cbuild -j$THREADS install
@@ -120,7 +120,7 @@ if [ ! -d "pcre2" ]; then
   git clone https://github.com/PCRE2Project/pcre2.git --recursive --branch pcre2-10.44 --depth 1
   pushd pcre2
 
-  cmake -Bbuild -DBUILD_SHARED_LIBS=OFF -DPCRE2_SUPPORT_LIBBZ2=OFF -DPCRE2_BUILD_PCRE2_8=ON -DPCRE2_BUILD_PCRE2_32=ON -DPCRE2_BUILD_PCRE2_16=ON -DPCRE2_SUPPORT_JIT=ON -DCMAKE_PREFIX_PATH="$prefix" -DCMAKE_INSTALL_PREFIX="$prefix" .
+  cmake -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -Bbuild -DBUILD_SHARED_LIBS=OFF -DPCRE2_SUPPORT_LIBBZ2=OFF -DPCRE2_BUILD_PCRE2_8=ON -DPCRE2_BUILD_PCRE2_32=ON -DPCRE2_BUILD_PCRE2_16=ON -DPCRE2_SUPPORT_JIT=ON -DCMAKE_PREFIX_PATH="$prefix" -DCMAKE_INSTALL_PREFIX="$prefix" .
   make -Cbuild -j8
   make -Cbuild -j8 install
   popd
@@ -133,7 +133,7 @@ if [ ! -d "graphite2-1.3.14" ]; then
   tar xvf graphite2-1.3.14.tgz
   pushd graphite2-1.3.14
   cp ../patches/graphite2.patch src/CMakeLists.txt
-  cmake -DCMAKE_PREFIX_PATH="$prefix" -DBUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX="$prefix" -Bbuild .
+  cmake -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_PREFIX_PATH="$prefix" -DBUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX="$prefix" -Bbuild .
   make -Cbuild -j8
   make -Cbuild -j8 install
   popd
@@ -168,7 +168,7 @@ sudo cp patches/fontconfig.pc $prefix/lib/pkgconfig/fontconfig.pc
 ### freetype, again
 pushd freetype-2.13.3
 rm -rf build
-cmake -Bbuild -DFT_DISABLE_HARFBUZZ=OFF -DCMAKE_PREFIX_PATH="$prefix" -DCMAKE_INSTALL_PREFIX="$prefix" -DBUILD_SHARED_LIBS=OFF .
+cmake -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -Bbuild -DFT_DISABLE_HARFBUZZ=OFF -DCMAKE_PREFIX_PATH="$prefix" -DCMAKE_INSTALL_PREFIX="$prefix" -DBUILD_SHARED_LIBS=OFF .
 # ./configure --prefix=$prefix --enable-freetype-config --disable-shared --enable-static --without-harfbuzz
 make -Cbuild -j$THREADS
 make -Cbuild -j$THREADS install
@@ -206,7 +206,7 @@ if [ ! -d "zstd-1.5.6" ]; then
   tar xvf v1.5.6.tar.gz
 
   pushd zstd-1.5.6
-  cmake -DCMAKE_PREFIX_PATH="$prefix" -Bbuild -S build/cmake -DZSTD_BUILD_SHARED=OFF -DZSTD_BUILD_STATIC=ON -DZSTD_PROGRAMS_LINK_SHARED=OFF -DZSTD_BUILD_CONTRIB=ON -DZSTD_LEGACY_SUPPORT=ON -DZSTD_ZLIB_SUPPORT=ON -DZSTD_LZMA_SUPPORT=ON -DZSTD_LZ4_SUPPORT=ON -DCMAKE_CXX_STANDARD=11 -DCMAKE_INSTALL_PREFIX="$prefix"
+  cmake -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_PREFIX_PATH="$prefix" -Bbuild -S build/cmake -DZSTD_BUILD_SHARED=OFF -DZSTD_BUILD_STATIC=ON -DZSTD_PROGRAMS_LINK_SHARED=OFF -DZSTD_BUILD_CONTRIB=ON -DZSTD_LEGACY_SUPPORT=ON -DZSTD_ZLIB_SUPPORT=ON -DZSTD_LZMA_SUPPORT=ON -DZSTD_LZ4_SUPPORT=ON -DCMAKE_CXX_STANDARD=11 -DCMAKE_INSTALL_PREFIX="$prefix"
   make -Cbuild -j8
   make -Cbuild install
   popd
@@ -217,7 +217,7 @@ fi
 if [ ! -d "libtiff" ]; then
   git clone https://github.com/kroketio/libtiff.git --recursive
   pushd libtiff
-  cmake -Bbuild2 -DCMAKE_PREFIX_PATH="$prefix" -Dzstd=ON -Dwebp=OFF -Dlzma=ON -Djpeg=ON -Dtiff-docs=OFF -Dtiff-tests=OFF -Dtiff-tools-unsupported=OFF -Dtiff-tools=OFF -Dtiff-docs=OFF -Dtiff-tests=OFF -Dtiff-tools-unsupported=OFF -Dtiff-tools=OFF -DCMAKE_INSTALL_PREFIX="$prefix" .
+  cmake -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -Bbuild2 -DCMAKE_PREFIX_PATH="$prefix" -Dzstd=ON -Dwebp=OFF -Dlzma=ON -Djpeg=ON -Dtiff-docs=OFF -Dtiff-tests=OFF -Dtiff-tools-unsupported=OFF -Dtiff-tools=OFF -Dtiff-docs=OFF -Dtiff-tests=OFF -Dtiff-tools-unsupported=OFF -Dtiff-tools=OFF -DCMAKE_INSTALL_PREFIX="$prefix" .
   make -Cbuild2 -j8 .
   make -Cbuild2 -j8 install
   popd
@@ -230,7 +230,7 @@ if [ ! -d "libwebp-1.4.0" ]; then
   tar xvf libwebp-1.4.0.tar.gz
   pushd libwebp-1.4.0
 
-  cmake -DCMAKE_PREFIX_PATH="$prefix" -DCMAKE_INSTALL_PREFIX="$prefix" -Bbuild -DBUILD_SHARED_LIBS=OFF -DCMAKE_PREFIX_PATH="$prefix" .
+  cmake -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_PREFIX_PATH="$prefix" -DCMAKE_INSTALL_PREFIX="$prefix" -Bbuild -DBUILD_SHARED_LIBS=OFF -DCMAKE_PREFIX_PATH="$prefix" .
   make -Cbuild -j8
   make -Cbuild -j8 install
   popd
@@ -256,7 +256,7 @@ if [ ! -d "md4c-release-0.5.2" ]; then
   wget https://github.com/mity/md4c/archive/refs/tags/release-0.5.2.tar.gz -O release-0.5.2.tar.gz
   tar xvf release-0.5.2.tar.gz
   pushd md4c-release-0.5.2
-  cmake -DCMAKE_PREFIX_PATH="$prefix" -Bbuild -DCMAKE_INSTALL_PREFIX="$prefix" -DBUILD_SHARED_LIBS=OFF .
+  cmake -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_PREFIX_PATH="$prefix" -Bbuild -DCMAKE_INSTALL_PREFIX="$prefix" -DBUILD_SHARED_LIBS=OFF .
   make -Cbuild -j8
   make -Cbuild -j8 install
   popd
@@ -267,7 +267,7 @@ if [ ! -d "libmng-2.0.3" ]; then
   wget https://downloads.sourceforge.net/project/libmng/libmng-devel/2.0.3/libmng-2.0.3.tar.gz
   tar xvf libmng-2.0.3.tar.gz
   pushd libmng-2.0.3
-  cmake -Bbuild -DMNG_INSTALL_LIB_DIR=lib -DBUILD_SHARED_LIBS=OFF -DBUILD_STATIC_LIBS=ON -DCMAKE_PREFIX_PATH="$HOME/static/out" -DCMAKE_INSTALL_PREFIX="$HOME/static/out" .
+  cmake -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -Bbuild -DMNG_INSTALL_LIB_DIR=lib -DBUILD_SHARED_LIBS=OFF -DBUILD_STATIC_LIBS=ON -DCMAKE_PREFIX_PATH="$HOME/static/out" -DCMAKE_INSTALL_PREFIX="$HOME/static/out" .
   make -Cbuild -j8
   make -Cbuild -j8 install
   popd
